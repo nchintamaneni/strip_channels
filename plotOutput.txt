@@ -1,0 +1,14 @@
+#!/usr/bin/env gnuplot
+set datafile commentschars ";"
+
+set terminal svg
+set output "outputFINISHED.svg"
+
+set xlabel "time (s)"
+set ylabel "sample value"
+set bmargin 0
+set format x ""
+set ytics -0.2,0.2
+set key bottom
+plot "output.dat" using 1:2 every 100 with lines lc rgbcolor "#a0a0b0" title "output"
+
