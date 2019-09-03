@@ -1,6 +1,8 @@
 # spectrogram code from: https://hansenjohnson.org/post/spectrograms-in-r/ 
 # applying it to multiple files code from: https://stackoverflow.com/questions/14958516/looping-through-all-files-in-directory-in-r-applying-multiple-commands
 
+args = commandArgs(trailingOnly=TRUE)
+
 ## SPECTROGRAM
 library(signal, warn.conflicts = F, quietly = T) # signal processing functions
 library(oce, warn.conflicts = F, quietly = T) # image plotting functions and nice color maps
@@ -54,7 +56,7 @@ spectrogramPlotAll <- function(fileName, verbose=FALSE, showWarnings=TRUE) {
         # config time axis
         t = spec$t
         
-        jpeg(paste(fileName, ".jpg"))
+        jpeg(paste(substr(fileName, 0, (nchar(fileName)-4)), "_Spetrogram.jpg", sep = ""))
         # plot spectrogram
         imagep(x = t,
                y = spec$f,
@@ -69,5 +71,5 @@ spectrogramPlotAll <- function(fileName, verbose=FALSE, showWarnings=TRUE) {
 }
 
 
-files <- list.files(path=".", pattern="*.wav", full.names=TRUE, recursive=TRUE, include.dirs = TRUE)
+files <- list.files(path=args[1], pattern="*.wav", full.names=TRUE, recursive=TRUE, include.dirs = TRUE)
 lapply(files, spectrogramPlotAll)
