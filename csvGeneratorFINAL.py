@@ -4,6 +4,10 @@ import os
 import subprocess
 import sys
 
+def changeSampleRate(path,factor):
+	sampleRate=48000/factor
+	stringCommand="ffmpeg -i "+path+" -ar "+str(sampleRate)+" "+path[:-4]+"_decreasedSampleRate.wav"
+	subprocess.call(stringCommand,shell=True)
 def csvGenerator(path):
 	if (os.path.isdir(path) == False):
 		if path.endswith(".wav"):
@@ -12,8 +16,8 @@ def csvGenerator(path):
 	else:
 		for filename in os.listdir(path):
 			csvGenerator(path + "/" + filename)
-
-csvGenerator("/Users/nehachintamaneni/output.wav")
+changeSampleRate("/Users/nehachintamaneni/Downloads/2019-02-19-TRec3Combined.wav",100)
+csvGenerator("/Users/nehachintamaneni/Downloads/2019-02-19-TRec3Combined_decreasedSampleRate.wav")
 
 
 
