@@ -21,9 +21,11 @@ plotRMS <- function (fileName, verbose=FALSE, showWarnings=TRUE) {
   
   df <- data.frame(time = fullTable$time, normPeak=normalizedData)
   
+  fileTitle = tail(strsplit(fileName,split="/")[[1]],1)
   fileName = substr(fileName, 0, (nchar(fileName)-4))
+  
   jpeg(paste(fileName, "_quietOrLoud.jpg", sep = ""))
-  ggplot(data=df, aes(x=time, y=normPeak)) + geom_bar(stat="identity")
+  ggplot(data=df, aes(x=time, y=normPeak)) + ggtitle(paste("Source: ", fileTitle)) + labs(x = "Time (ms)", y = "Indicator") + geom_bar(stat="identity")
 }
 
 lapply(args[1], plotRMS)
