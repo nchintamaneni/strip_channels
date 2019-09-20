@@ -31,7 +31,7 @@ amplitudePlotAll <- function (fileName, verbose=FALSE, showWarnings=TRUE) {
   fileTitle = tail(strsplit(filePath,split="/")[[1]],1)
   
   jpeg(paste(filePath, "_Amplitude.jpg", sep = ""))
-  plot(timeArray, snd, type='l', col='black', main=paste(fileTitle, "- Amplitude Graph"), xlab='Time (s)', ylab='Amplitude') 
+  plot(timeArray, snd, type='l', col='black', main=paste(fileTitle, "- Amplitude Graph"), xlab='Time (s)', ylab='Amplitude', ylim=c(-4000,4000)) 
   dev.off()
 }
 
