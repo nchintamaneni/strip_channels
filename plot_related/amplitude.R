@@ -6,7 +6,21 @@ args = commandArgs(trailingOnly=TRUE)
 # signal processing, image plotting, and manipulate .wav files functions
 library(tuneR, warn.conflicts = F, quietly = T) 
 
-amplitudePlotAll <- function (fileName, verbose=FALSE, showWarnings=TRUE) { 
+findMaxDuration <- function(fileList, verbose=FALSE, showWarnings=TRUE) {
+  max <- 0
+  for (file in fileList){
+    sound = readWave(file)
+    duration = round(length(sound@left) / sound@samp.rate, 2)
+    
+    if(duration > max){
+      max <- duration
+    }
+  }
+  return(max)
+  
+}
+
+amplitudePlotAll <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) { 
   # define path to audio file
   fin = fileName
   
@@ -30,10 +44,13 @@ amplitudePlotAll <- function (fileName, verbose=FALSE, showWarnings=TRUE) {
   filePath = substr(fileName, 0, (nchar(fileName)-4))
   fileTitle = tail(strsplit(filePath,split="/")[[1]],1)
   
-  jpeg(paste(filePath, "_Amplitude.jpg", sep = ""))
-  plot(timeArray, snd, type='l', col='black', main=paste(fileTitle, "- Amplitude Graph"), xlab='Time (s)', ylab='Amplitude', ylim=c(-4000,4000)) 
+  jpeg(paste(filePath, "_Amplitude.jpg", sep = ""), width=1000, height=300)
+  plot(timeArray, snd, type='l', col='black', main=paste(fileTitle, "- Amplitude Graph"), xlab='Time (s)', ylab='Amplitude', xlim = c(0, maxDur), ylim=c(-40000,40000)) 
   dev.off()
 }
 
 files <- list.files(path=args[1], pattern="*.wav", full.names=TRUE, recursive=TRUE, include.dirs = TRUE)
-lapply(files, amplitudePlotAll)
+maxDur <- as.integer(findMaxDuration(files)+0.5)
+
+print(maxDur)
+lapply(files, amplitudePlotAll, maxDur)
