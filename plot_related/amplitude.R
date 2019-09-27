@@ -5,6 +5,7 @@ args = commandArgs(trailingOnly=TRUE)
 
 # signal processing, image plotting, and manipulate .wav files functions
 library(tuneR, warn.conflicts = F, quietly = T) 
+library(ggplot2)
 
 findMaxDuration <- function(fileList, verbose=FALSE, showWarnings=TRUE) {
   max <- 0
@@ -44,8 +45,20 @@ amplitudePlotAll <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE
   filePath = substr(fileName, 0, (nchar(fileName)-4))
   fileTitle = tail(strsplit(filePath,split="/")[[1]],1)
   
+  df = data.frame(time = timeArray, sound=snd)
+  
   jpeg(paste(filePath, "_Amplitude.jpg", sep = ""), width=1000, height=300)
-  plot(timeArray, snd, type='l', col='black', main=paste(fileTitle, "- Amplitude Graph"), xlab='Time (s)', ylab='Amplitude', xlim = c(0, maxDur), ylim=c(-40000,40000)) 
+  
+  myPlot <- ggplot(df, aes(x=time, y=sound)) + 
+    geom_line(stat = "identity") + 
+    ggtitle(paste("Source:", fileTitle, ".wav")) + 
+    labs(x = "Time (s)", y = "Amplitude") +
+    theme_classic() +
+    xlim(0, maxDur) +
+    ylim(-40000,40000)
+
+  # plot(timeArray, snd, type='l', col='black', main=paste(fileTitle, "- Amplitude Graph"), xlab='Time (s)', ylab='Amplitude', xlim = c(0, maxDur), ylim=c(-40000,40000)) 
+  print(myPlot)
   dev.off()
 }
 
