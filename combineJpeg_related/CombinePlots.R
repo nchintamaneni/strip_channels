@@ -48,21 +48,25 @@ amplitudePlotAll <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE
   filePath = substr(fileName, 0, (nchar(fileName)-4))
   fileTitle = tail(strsplit(filePath,split="/")[[1]],1)
   
-  jpeg(paste(filePath, "_Amplitude.jpg", sep = ""), width=1000, height=300)
-  plot(timeArray, snd, type='l', col='black', main=paste(fileTitle, "- Amplitude Graph"), xlab='Time (s)', ylab='Amplitude', xlim = c(0, maxDur), ylim=c(-40000,40000)) 
-  dev.off()
+  df = data.frame(time = timeArray, sound=snd)
   
-  return(paste(filePath, "_Amplitude.jpg", sep = ""))
-}
-
-generateCSV <- function(filePath, verbose=FALSE, showWarnings=TRUE){
-  print("Filepath: ")
-  print(filePath)
-  system(paste("ffprobe -f lavfi -i amovie=", filePath,",astats=metadata=1:reset=1 -show_entries 
-         frame=pkt_pts_time:frame_tags=lavfi.astats.Overall.Peak_level,
-         lavfi.astats.Overall.RMS_peak,lavfi.astats.Overall.Flat_factor,
-         lavfi.astats.Overall.Peak_count,lavfi.astats.Overall.Dynamic_range,
-         -of csv=p=0 -print_format csv>",substr(filePath, 0, (nchar(filePath)-4)),".csv", sep=""))
+  #jpeg(paste(filePath, "_Amplitude.jpg", sep = ""), width=1000, height=300)
+  
+  sec = trunc(dur)
+  min = trunc(dur/60)
+  durationString = paste(min, "min", sec, "sec")
+  
+  myPlot <- ggplot(df, aes(x=time, y=sound)) + 
+    geom_line(stat = "identity") + 
+    ggtitle(paste("Source:", fileTitle, "//", durationString)) + 
+    labs(x = "Time (s)", y = "Amplitude") +
+    theme_classic() +
+    theme(plot.title = element_text(size = 20)) +
+    xlim(0, maxDur) +
+    ylim(-40000,40000)
+  
+  # plot(timeArray, snd, type='l', col='black', main=paste(fileTitle, "- Amplitude Graph"), xlab='Time (s)', ylab='Amplitude', xlim = c(0, maxDur), ylim=c(-40000,40000)) 
+  return(myPlot)
 }
 
 findMaxDurationBarcode <- function(fileList, verbose=FALSE, showWarnings=TRUE) {
@@ -70,6 +74,7 @@ findMaxDurationBarcode <- function(fileList, verbose=FALSE, showWarnings=TRUE) {
   for (file in fileList){
     durationList = read.csv(file, header=TRUE)$time
     duration = durationList[length(durationList)]
+    print(length(durationList))
     
     if(duration > max){
       max <- duration
@@ -103,67 +108,54 @@ plotRMS <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) {
   }
   
   timeStampTemp = fullTable$time
+  #timeStampTemp = timeStampTemp / 1000
   temp = data.frame(timeStamp = timeStampTemp, firstQuartile=firstQ, secondQuartile=secondQ, thirdQuartile=thirdQ, fourthQuartile=fourthQ)
   dat <- temp
   dat.m <- reshape2::melt(dat, id.vars=c("timeStamp"))
   
   fileTitle = tail(strsplit(fileName,split="/")[[1]],1)
   fileName = substr(fileName, 0, (nchar(fileName)-4))
-  jpeg(paste(fileName, "_quietOrLoud_Shaded.jpg", sep = ""), width=1000, height=300)
+  #jpeg(paste(fileName, "_quietOrLoud_Shaded.jpg", sep = ""), width=1000, height=300)
   myplot <- ggplot(dat.m, aes(x=timeStamp, y=value, fill=variable)) + 
     geom_bar(stat = "identity") + 
-    ggtitle(paste("Source:", fileTitle)) + 
     labs(x = "Time (ms)", y = "Indicator") +
     scale_fill_manual(values = c("#ffffff", "#858585", "#4f4f4f","#0d0d0d")) +
+    labs(fill = "Quartile shadings: ") +
     theme_classic() +
-    xlim(0, maxDur)
+    xlim(0, maxDur) +
+    theme(legend.position="top")
   
-  print(myplot)
-  dev.off();
+  return(myplot)
+  #print(myplot)
+  #dev.off();
   
-  return(paste(fileName, "_quietOrLoud_Shaded.jpg", sep = ""))
+  #return(paste(fileName, "_quietOrLoud_Shaded.jpg", sep = ""))
 }
-
-
-# combinePlots <- function (filePath, fileName, verbose=FALSE, showWarnings=TRUE) { 
-#   print("hi1")
-#   amplitudePlotAll(filePath)
-#   dev.off()
-#   plotRMS(fileName)
-#   dev.off()
-#   p1 <- ggdraw() + draw_image(amplitudePlotAll(filePath), scale = 0.9)
-#   p2 <- ggdraw() + draw_image(plotRMS(fileName), scale=0.9)
-#   perfect = plot_grid(p1, p2, ncol = 2, rel_widths = c(3, 1))
-#   save_plot(paste(filePath, "_combined.jpg", sep = ""), perfect, base_height=6)
-# }
 
 combinePlots <- function(fileName, maxDurAmp, maxDurBar, verbose=FALSE, showWarnings=TRUE){
   fileName <- substr(fileName, 0, (nchar(fileName)-4))
   amplitude <- amplitudePlotAll(paste(fileName, ".wav", sep=""), maxDurAmp)
   barcode <- plotRMS(paste(fileName, ".csv", sep=""), maxDurBar)
   
-  p1 <- ggdraw() + draw_image(amplitude, scale = 0.9)
-  p2 <- ggdraw() + draw_image(barcode, scale=0.9)
-  perfect = plot_grid(p1, p2, ncol = 2, rel_widths = c(3, 1))
+  #p1 <- ggdraw() + draw_image(amplitude, scale = 0.9)
+  #p2 <- ggdraw() + draw_image(barcode, scale=0.9)
+  perfect = plot_grid(amplitude, barcode,
+                      nrow = 2, align = 'v', axis = 'l')
+  
   save_plot(paste(fileName, "_combined.jpg", sep = ""), perfect, base_height=6)
 }
 
-
+# Collect audioFiles
 audioFiles <- files <- list.files(path=args[1], pattern="*.wav", full.names=TRUE, recursive=TRUE, include.dirs = TRUE)
 
-#Generate all the CSV files first
-#lapply(audioFiles, generateCSV)
-
-#Collect all the csv files
+# Collect csvFiles
 csvFiles <- files <- list.files(path=args[1], pattern="*.csv", full.names=TRUE, recursive=TRUE, include.dirs = TRUE)
 
-print("bleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeh")
-#print(csvFiles)
-
-#Find maxes
+# Find maxes
 maxDurAmp <- findMaxDurationAmplitude(audioFiles)
 maxDurBar <- findMaxDurationBarcode(csvFiles)
 
+# Make the combined jpegs!
 lapply(audioFiles, combinePlots, maxDurAmp, maxDurBar)
 
 
