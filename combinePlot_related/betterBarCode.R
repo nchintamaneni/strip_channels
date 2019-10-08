@@ -1,11 +1,10 @@
 library(ggplot2, reshape)
-
-args = commandArgs(trailingOnly=TRUE)
-
 library("cowplot")
 theme_set(theme_cowplot())
 
+args = commandArgs(trailingOnly=TRUE)
 
+# finds max out of all csv files
 findMaxDuration <- function(fileList, verbose=FALSE, showWarnings=TRUE) {
   max <- 0
   for (file in fileList){
@@ -19,7 +18,8 @@ findMaxDuration <- function(fileList, verbose=FALSE, showWarnings=TRUE) {
   return(max)
 }
 
-plotRMS <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) { 
+# makes barcode graph
+plotBarCode <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) { 
   fullTable <-read.csv(fileName)
   peaks <-fullTable$Peak.Level
   
@@ -64,9 +64,8 @@ plotRMS <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) {
   return(myplot)
 }
 
-
-combinePlots <- function(fileName, maxDurBar, verbose=FALSE, showWarnings=TRUE){
-  barcode <- plotRMS(fileName, maxDurBar)
+savePlot <- function(fileName, maxDurBar, verbose=FALSE, showWarnings=TRUE){
+  barcode <- plotBarCode(fileName, maxDurBar)
   perfect = plot_grid(barcode, nrow = 1, align = 'v', axis = 'l')
   
   save_plot(paste(fileName, "_quietOrLoud_Shaded.jpg", sep = ""), perfect, base_height=3, base_width=10)
@@ -78,4 +77,4 @@ files <- list.files(path=args[1], pattern="*.csv", full.names=TRUE, recursive=TR
 
 maxDurBar <- findMaxDuration(files)
 
-lapply(files, combinePlots, maxDurBar)
+lapply(files, savePlot, maxDurBar)

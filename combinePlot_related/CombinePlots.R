@@ -83,7 +83,7 @@ findMaxDurationBarcode <- function(fileList, verbose=FALSE, showWarnings=TRUE) {
   return(max)
 }
 
-plotRMS <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) { 
+plotBarCode <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) { 
   
   fullTable <-read.csv(fileName)
   #timeStamp <-read.csv(fileName)$time
@@ -126,19 +126,13 @@ plotRMS <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) {
     theme(legend.position="top")
   
   return(myplot)
-  #print(myplot)
-  #dev.off();
-  
-  #return(paste(fileName, "_quietOrLoud_Shaded.jpg", sep = ""))
 }
 
 combinePlots <- function(fileName, maxDurAmp, maxDurBar, verbose=FALSE, showWarnings=TRUE){
   fileName <- substr(fileName, 0, (nchar(fileName)-4))
   amplitude <- amplitudePlotAll(paste(fileName, ".wav", sep=""), maxDurAmp)
-  barcode <- plotRMS(paste(fileName, ".csv", sep=""), maxDurBar)
+  barcode <- plotBarCode(paste(fileName, ".csv", sep=""), maxDurBar)
   
-  #p1 <- ggdraw() + draw_image(amplitude, scale = 0.9)
-  #p2 <- ggdraw() + draw_image(barcode, scale=0.9)
   perfect = plot_grid(amplitude, barcode,
                       nrow = 2, align = 'v', axis = 'l')
   
