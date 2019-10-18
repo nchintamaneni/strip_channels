@@ -2,10 +2,11 @@
 
 import os
 import subprocess
+import sys
 
 def stitchFiles(inputFile1, inputFile2):
-	if inputFile1.endswith("-Group1of2.wav"):
-		subprocess.call(["ffmpeg", "-i", inputFile1 , "-i", inputFile2, "-filter_complex","[0:0][1:0]concat=n=2:v=0:a=1[out]", "-map","[out]", inputFile1[:-14]+"Combined.wav"])
+	if inputFile1.endswith("-Group1of2_incVol.wav"):
+		subprocess.call(["ffmpeg", "-i", inputFile1 , "-i", inputFile2, "-filter_complex","[0:0][1:0]concat=n=2:v=0:a=1[out]", "-map","[out]", inputFile1[:-21]+"Combined.wav"])
 
 
 
@@ -18,15 +19,14 @@ def stitchFiles(inputFile1, inputFile2):
 
 def findMatchingGroupFiles(wavFileSourceDirectory):
 	for file in os.listdir(wavFileSourceDirectory):
-		if file.endswith("-Group1of2.wav"):
-			filePrefix=file[:-14]
-			file2=filePrefix+"-Group2of2.wav"
+		if file.endswith("-Group1of2_incVol.wav"):
+			filePrefix=file[:-21]
+			file2=filePrefix+"-Group2of2_incVol.wav"
 			if file2 in os.listdir(wavFileSourceDirectory):
 				stitchFiles(wavFileSourceDirectory+"/"+file, wavFileSourceDirectory+"/"+file2)
 
 
-wavDirectory="/Volumes/ICData/Mara_2019-01/wavFiles"
-findMatchingGroupFiles(wavDirectory)
+findMatchingGroupFiles(sys.argv[1])
 
 
 
