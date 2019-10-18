@@ -1,25 +1,26 @@
 library(ggplot2, reshape)
-library("cowplot")
-theme_set(theme_cowplot())
 
 args = commandArgs(trailingOnly=TRUE)
 
-# finds max out of all csv files
+library("cowplot")
+theme_set(theme_cowplot())
+
+
 findMaxDuration <- function(fileList, verbose=FALSE, showWarnings=TRUE) {
   max <- 0
   for (file in fileList){
     durationList = read.csv(file, header=TRUE)$time
-    duration = durationList[length(durationList)]
-    
-    if(duration > max){
-      max <- duration
+    duration = durationList[length(durationList)-1]
+    if(!is.null(duration)){
+      if(duration > max){
+        max <- duration
+      }
     }
   }
   return(max)
 }
 
-# makes barcode graph
-plotBarCode <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) { 
+plotRMS <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) { 
   fullTable <-read.csv(fileName)
   peaks <-fullTable$Peak.Level
   
@@ -55,7 +56,7 @@ plotBarCode <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) {
     geom_bar(stat = "identity") + 
     ggtitle(paste("Source:", fileTitle, "//", durationString)) + 
     labs(x = "Time (s)", y = "Indicator") +
-    scale_fill_manual(values = c("#ffffff", "#858585", "#4f4f4f","#0d0d0d")) +
+    scale_fill_manual(values = c("#ffffff", "#DCDCDC", "#888888","#0d0d0d")) +
     theme_classic() +
     labs(fill = "Category: ") +
     xlim(0, maxDur) +
@@ -64,8 +65,9 @@ plotBarCode <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE) {
   return(myplot)
 }
 
-savePlot <- function(fileName, maxDurBar, verbose=FALSE, showWarnings=TRUE){
-  barcode <- plotBarCode(fileName, maxDurBar)
+
+combinePlots <- function(fileName, maxDurBar, verbose=FALSE, showWarnings=TRUE){
+  barcode <- plotRMS(fileName, maxDurBar)
   perfect = plot_grid(barcode, nrow = 1, align = 'v', axis = 'l')
   
   save_plot(paste(fileName, "_quietOrLoud_Shaded.jpg", sep = ""), perfect, base_height=3, base_width=10)
@@ -77,4 +79,4 @@ files <- list.files(path=args[1], pattern="*.csv", full.names=TRUE, recursive=TR
 
 maxDurBar <- findMaxDuration(files)
 
-lapply(files, savePlot, maxDurBar)
+lapply(files, combinePlots, maxDurBar)
