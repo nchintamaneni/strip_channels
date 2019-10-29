@@ -3,6 +3,8 @@
 # Combines files with endings *PATTERN_ONE and *PATTERN_TWO into *Combined.wav.
 # PATTERN_ONE and PATTERN_TWO are currently set as "-Group1of2_incVol.wav" and "*-Group2of2_incVol.wav"
 
+# Author: Neha Chintamaneni
+
 import os
 import subprocess
 import sys
