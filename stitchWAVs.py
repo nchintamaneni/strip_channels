@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
-# Combines files with endings *PATTERN_ONE and *PATTERN_TWO into *Combined.wav.
+# Description:
+# Given (the path to) a folder of wav files, combines files with endings *PATTERN_ONE and *PATTERN_TWO into *Combined.wav.
 # PATTERN_ONE and PATTERN_TWO are currently set as "-Group1of2_incVol.wav" and "*-Group2of2_incVol.wav"
+
+# Usage:
+# $ python stitchWAVs.py [path/to/folder/of/wav/files]
 
 # Author: Neha Chintamaneni
 

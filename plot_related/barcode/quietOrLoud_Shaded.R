@@ -1,4 +1,4 @@
-# Usage: In Rstudio terminal, type command 
+# Usage: In Rstudio terminal (or command line if RStudio.exe is added to path), type command 
 # $ Rscript [path/to]quietOrLoud_Shaded.R "[path/to/folder/of/csv/files]"
 
 # Description: 
