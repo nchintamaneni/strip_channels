@@ -1,4 +1,14 @@
-# spectrogram code from: https://hansenjohnson.org/post/spectrograms-in-r/ 
+# Usage: 
+# In Rstudio terminal (or command line if RStudio.exe is added to path), type command 
+# `$ Rscript [path/to]spectrogram.R "[path/to/folder/of/wav/files]"`
+
+# Description:
+# This script will plot a spectrogram based on the frequency and amplitude per wav file, given a folder of .wav files. 
+# The axis of the graphs are determined per wav file. 
+# Example image can be found in the `~/plot_related/amplitudeFrequencySpectrogram/exampleImages/` folder.
+
+# Author:
+# spectrogram code referenced from: https://hansenjohnson.org/post/spectrograms-in-r/ 
 # applying it to multiple files code from: https://stackoverflow.com/questions/14958516/looping-through-all-files-in-directory-in-r-applying-multiple-commands
 
 args = commandArgs(trailingOnly=TRUE)

@@ -3,7 +3,8 @@
 
 # Description:
 # This Rscript will plot an amplitude graph given a folder of .wav files.
-# The length / max x value is determined by the longest .wav in the folder.
+# The length (ie. the max x value) is determined by the longest .wav in the folder.
+# Example image can be found in the `~/plot_related/amplitudeFrequencySpectrogram/exampleImages/` folder.
 
 # Author: Neha chintamaneni and Jiachen (Amy) Liu
 
@@ -72,6 +73,7 @@ amplitudePlotAll <- function (fileName, maxDur, verbose=FALSE, showWarnings=TRUE
   dev.off()
 }
 
+# Recursively go through a directory's files to find .wav files to plot the amplitude graph on
 files <- list.files(path=args[1], pattern="*.wav", full.names=TRUE, recursive=TRUE, include.dirs = TRUE)
 maxDur <- as.integer(findMaxDuration(files)+0.5)
 lapply(files, amplitudePlotAll, maxDur)

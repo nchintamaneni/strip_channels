@@ -1,4 +1,14 @@
-# Code from: http://samcarcagno.altervista.org/blog/basic-sound-processing-r/?doing_wp_cron=1567537792.2555119991302490234375
+# Usage: 
+# In Rstudio terminal (or command line if RStudio.exe is added to path), type command 
+# $ Rscript [path/to]Amplitude_Frequency_plot.R "[path/to/folder/of/wav/files]"
+
+# Description:
+# This script plots both the amplitude and the frequency of a wav file (on 2 separate jpgs) per wav file given a folder of wav files.
+# Example image can be found in the `~/plot_related/amplitudeFrequencySpectrogram/exampleImages/` folder.
+
+# Author: 
+# The code is heavily referenced from:
+# http://samcarcagno.altervista.org/blog/basic-sound-processing-r/?doing_wp_cron=1567537792.2555119991302490234375
 # and: https://hansenjohnson.org/post/spectrograms-in-r/ 
 
 args = commandArgs(trailingOnly=TRUE)

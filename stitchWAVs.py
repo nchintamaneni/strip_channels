@@ -3,6 +3,7 @@
 # Description:
 # Given (the path to) a folder of wav files, combines files with endings *PATTERN_ONE and *PATTERN_TWO into *Combined.wav.
 # PATTERN_ONE and PATTERN_TWO are currently set as "-Group1of2_incVol.wav" and "*-Group2of2_incVol.wav"
+# The script assumes that if a *PATTERN_TWO* appears, *PATTERN_ONE* must also appear (similar to how if there is a group 2 of 2, then there must be a group 1 of 2). 
 
 # Usage:
 # $ python stitchWAVs.py [path/to/folder/of/wav/files]
